@@ -19,7 +19,7 @@ const blockComponents = {
 
 interface PageParams {
   params: {
-	slug?: string[]
+	slug: string
   }
 }
 
@@ -43,7 +43,7 @@ export async function generateStaticParams() {
 }
 
 // Metadata for the page
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params }: PageParams) {
   const payload = await getPayloadClient()
 
   const pages = await payload.find({
@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
   if (!pages.docs[0]) {
 	return {
-	  title: 'Page Not Found',
+	  title: 'Strona nie znaleziona',
 	}
   }
 
@@ -70,8 +70,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function DynamicPage({ params }: PageParams) {
-  // Handle the params.slug properly - checking if it exists
-  const slug = params?.slug ? params.slug.join('/') : ''
+  // Use the slug directly - it's already a string in this route
+  const slug = params.slug
   const payload = await getPayloadClient()
 
   // Update to include draft: true for live preview

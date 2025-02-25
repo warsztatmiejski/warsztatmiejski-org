@@ -7,14 +7,14 @@ export const Pages: CollectionConfig = {
 	useAsTitle: 'title',
 	defaultColumns: ['title', 'slug', 'status', 'updatedAt'],
 	group: 'Content',
-	// Add Live Preview configuration
+	// Poprawiona konfiguracja Live Preview
 	livePreview: {
 	  url: ({ data }) => {
 		// Home page has empty or '/' slug
-		if (!data.slug || data.slug === '/' || data.slug === '') {
+		if (!data?.slug || data.slug === '/' || data.slug === '') {
 		  return `${process.env.NEXT_PUBLIC_SERVER_URL}/`
 		}
-		// For other pages
+		// For other pages - upewnij się, że adres URL jest poprawny
 		return `${process.env.NEXT_PUBLIC_SERVER_URL}/${data.slug}`
 	  },
 	},
@@ -35,7 +35,7 @@ export const Pages: CollectionConfig = {
 	  required: true,
 	  unique: true,
 	  admin: {
-		description: 'Leave empty for homepage',
+		description: 'Pozostaw puste dla strony głównej',
 	  },
 	},
 	{
@@ -233,8 +233,8 @@ export const Pages: CollectionConfig = {
 	},
   ],
   versions: {
-	  drafts: {
-		autosave: true,
-	  },
+	drafts: {
+	  autosave: true,
 	},
+  },
 }
