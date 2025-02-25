@@ -1,8 +1,27 @@
 // src/app/(frontend)/[slug]/page.tsx
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 import getPayloadClient from '../../(payload)/_payload'
-import { RichText } from '@/components/RichText'
+import { RefreshRouteOnSave } from '@/components/RefreshRouteOnSave'
+import React, { Fragment } from 'react'
+
+// Import your block components
+import { Hero } from '@/components/blocks/Hero'
+import { Content } from '@/components/blocks/Content'
+import { Features } from '@/components/blocks/Features'
+import { CTA } from '@/components/blocks/CTA'
+
+const blockComponents = {
+  hero: Hero,
+  content: Content,
+  features: Features,
+  cta: CTA,
+}
+
+interface PageParams {
+  params: {
+	slug?: string[]
+  }
+}
 
 // Generate static params
 export async function generateStaticParams() {
@@ -50,51 +69,38 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-// Page component
-export default async function Page({ params }: { params: { slug: string } }) {
-  const { slug } = params
+export default async function DynamicPage({ params }: PageParams) {
+  // Handle the params.slug properly - checking if it exists
+  const slug = params?.slug ? params.slug.join('/') : ''
   const payload = await getPayloadClient()
 
-  // Fetch the page by slug
-  const pagesQuery = await payload.find({
+  // Update to include draft: true for live preview
+  const pages = await payload.find({
 	collection: 'pages',
 	where: {
 	  slug: {
 		equals: slug,
 	  },
-	  status: {
-		equals: 'published',
-	  },
 	},
+	draft: true, // Enable draft mode for live preview
   })
 
-  // If no page is found, return 404
-  if (!pagesQuery.docs[0]) {
+  if (!pages.docs[0]) {
 	notFound()
   }
 
-  const page = pagesQuery.docs[0]
+  const page = pages.docs[0]
 
   return (
-	<div className="max-w-4xl mx-auto py-8">
-	  <header className="mb-8">
-		<h1 className="text-4xl font-bold mb-4">{page.title}</h1>
-
-		{page.featuredImage && (
-		  <div className="relative h-64 w-full mb-6">
-			<Image
-			  src={page.featuredImage.url}
-			  alt={page.featuredImage.alt || page.title}
-			  fill
-			  className="object-cover rounded-lg"
-			/>
-		  </div>
-		)}
-	  </header>
-
-	  <div className="prose prose-lg max-w-none">
-		<RichText content={page.content} />
+	<Fragment>
+	  <RefreshRouteOnSave />
+	  <div>
+		{page.layout?.map((block, i) => {
+		  const Component = blockComponents[block.blockType]
+		  if (!Component) return null
+		  return <Component key={i} {...block} />
+		})}
 	  </div>
-	</div>
+	</Fragment>
   )
 }

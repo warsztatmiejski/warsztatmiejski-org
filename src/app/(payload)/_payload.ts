@@ -1,28 +1,54 @@
 // src/app/(payload)/_payload.ts
-import { getPayload } from 'payload/dist/payload'
+import { getPayload } from 'payload'
+import type { Payload } from 'payload'
 import config from '../../../payload.config'
 
-// This singleton ensures that Payload is only instantiated once
-let payload
+// Global singleton
+let cached = (global as any).payload
 
-// Singleton function that retrieves or instantiates Payload
-export default async function getPayloadClient() {
-  if (payload) return payload
+if (!cached) {
+  cached = (global as any).payload = {
+	client: null,
+	promise: null,
+  }
+}
 
-  // Check if the Payload secret is set
+export default async function getPayloadClient(): Promise<Payload> {
+  // Debug environment variables
+  console.log('Debug env vars:')
+  console.log('- PAYLOAD_SECRET exists:', !!process.env.PAYLOAD_SECRET)
+  console.log('- NODE_ENV:', process.env.NODE_ENV)
+  console.log('- SERVER_URL:', process.env.NEXT_PUBLIC_SERVER_URL)
+
   if (!process.env.PAYLOAD_SECRET) {
 	throw new Error('PAYLOAD_SECRET environment variable is missing')
   }
 
-  // Initialize Payload
-  payload = await getPayload({
-	// Pass in the config object
-	config,
-	// Configure Payload to work with Next.js
-	options: {
-	  local: true,
-	},
-  })
+  if (cached.client) {
+	return cached.client
+  }
 
-  return payload
+  if (!cached.promise) {
+	try {
+	  cached.promise = getPayload({
+		config,
+		options: {
+		  local: true,
+		  secret: process.env.PAYLOAD_SECRET, // Try explicitly passing it here
+		},
+	  })
+	} catch (error) {
+	  console.error('Error initializing Payload:', error)
+	  throw error
+	}
+  }
+
+  try {
+	cached.client = await cached.promise
+  } catch (e) {
+	cached.promise = null
+	throw e
+  }
+
+  return cached.client
 }

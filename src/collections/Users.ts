@@ -1,37 +1,20 @@
-// src/collections/Users.ts
-import { CollectionConfig } from 'payload/types';
+import type { CollectionConfig } from 'payload'
 
 export const Users: CollectionConfig = {
   slug: 'users',
-  auth: true, // Enable authentication
+  auth: true,
   admin: {
 	useAsTitle: 'email',
-	group: 'Admin',
-  },
-  access: {
-	// Only admins can read users
-	read: ({ req }) => {
-	  return req.user?.role === 'admin';
-	},
-	// Only admins can create users
-	create: ({ req }) => {
-	  return req.user?.role === 'admin';
-	},
   },
   fields: [
-	// Email and password are added automatically because auth: true
 	{
-	  name: 'firstName',
+	  name: 'name',
 	  type: 'text',
-	},
-	{
-	  name: 'lastName',
-	  type: 'text',
+	  label: 'Imię i nazwisko',
 	},
 	{
 	  name: 'role',
 	  type: 'select',
-	  defaultValue: 'editor',
 	  options: [
 		{
 		  label: 'Admin',
@@ -42,7 +25,8 @@ export const Users: CollectionConfig = {
 		  value: 'editor',
 		},
 	  ],
+	  defaultValue: 'editor',
 	  required: true,
 	},
   ],
-};
+}
