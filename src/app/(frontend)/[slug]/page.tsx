@@ -19,88 +19,133 @@ const blockComponents = {
 
 interface PageParams {
   params: {
-	slug: string
+    slug: string
   }
 }
 
 // Generate static params
 export async function generateStaticParams() {
-  const payload = await getPayloadClient()
+  try {
+    const payload = await getPayloadClient()
+    
+    if (!payload) {
+      console.error('Payload client is undefined in generateStaticParams')
+      return []
+    }
 
-  const pages = await payload.find({
-	collection: 'pages',
-	limit: 100,
-	where: {
-	  status: {
-		equals: 'published',
-	  },
-	},
-  })
+    const pages = await payload.find({
+      collection: 'pages',
+      limit: 100,
+      where: {
+        status: {
+          equals: 'published',
+        },
+      },
+    })
 
-  return pages.docs.map((page) => ({
-	slug: page.slug,
-  }))
+    if (!pages?.docs) {
+      console.error('No pages found in generateStaticParams')
+      return []
+    }
+
+    return pages.docs.map((page) => ({
+      slug: page.slug || '',
+    }))
+  } catch (error) {
+    console.error('Error in generateStaticParams:', error)
+    return []
+  }
 }
 
 // Metadata for the page
 export async function generateMetadata({ params }: PageParams) {
-  const payload = await getPayloadClient()
+  try {
+    const payload = await getPayloadClient()
+    
+    if (!payload) {
+      console.error('Payload client is undefined in generateMetadata')
+      return {
+        title: 'Error',
+      }
+    }
 
-  const pages = await payload.find({
-	collection: 'pages',
-	where: {
-	  slug: {
-		equals: params.slug,
-	  },
-	},
-  })
+    const pages = await payload.find({
+      collection: 'pages',
+      where: {
+        slug: {
+          equals: params.slug,
+        },
+      },
+    })
 
-  if (!pages.docs[0]) {
-	return {
-	  title: 'Strona nie znaleziona',
-	}
-  }
+    if (!pages?.docs || pages.docs.length === 0) {
+      return {
+        title: 'Strona nie znaleziona',
+      }
+    }
 
-  const page = pages.docs[0]
+    const page = pages.docs[0]
 
-  return {
-	title: page.meta?.title || page.title,
-	description: page.meta?.description,
+    return {
+      title: page.meta?.title || page.title || 'Page',
+      description: page.meta?.description || '',
+    }
+  } catch (error) {
+    console.error('Error in generateMetadata:', error)
+    return {
+      title: 'Error',
+    }
   }
 }
 
 export default async function DynamicPage({ params }: PageParams) {
-  // Use the slug directly - it's already a string in this route
-  const slug = params.slug
-  const payload = await getPayloadClient()
+  try {
+    // Use the slug directly - it's already a string in this route
+    const slug = params.slug
+    const payload = await getPayloadClient()
+    
+    if (!payload) {
+      console.error('Payload client is undefined')
+      return <div>Error loading content. Please try again later.</div>
+    }
 
-  // Update to include draft: true for live preview
-  const pages = await payload.find({
-	collection: 'pages',
-	where: {
-	  slug: {
-		equals: slug,
-	  },
-	},
-	draft: true, // Enable draft mode for live preview
-  })
+    // Update to include draft: true for live preview
+    const pagesResponse = await payload.find({
+      collection: 'pages',
+      where: {
+        slug: {
+          equals: slug,
+        },
+      },
+      draft: true, // Enable draft mode for live preview
+    })
 
-  if (!pages.docs[0]) {
-	notFound()
+    if (!pagesResponse?.docs || pagesResponse.docs.length === 0) {
+      console.error('Page not found:', slug)
+      notFound()
+    }
+
+    const page = pagesResponse.docs[0]
+
+    return (
+      <Fragment>
+        <RefreshRouteOnSave />
+        <div>
+          {page?.layout && Array.isArray(page.layout) ? (
+            page.layout.map((block, i) => {
+              if (!block || !block.blockType) return null
+              const Component = blockComponents[block.blockType]
+              if (!Component) return null
+              return <Component key={i} {...block} />
+            })
+          ) : (
+            <div>No content blocks found</div>
+          )}
+        </div>
+      </Fragment>
+    )
+  } catch (error) {
+    console.error('Error in DynamicPage:', error)
+    return <div>Error loading content. Please try again later.</div>
   }
-
-  const page = pages.docs[0]
-
-  return (
-	<Fragment>
-	  <RefreshRouteOnSave />
-	  <div>
-		{page.layout?.map((block, i) => {
-		  const Component = blockComponents[block.blockType]
-		  if (!Component) return null
-		  return <Component key={i} {...block} />
-		})}
-	  </div>
-	</Fragment>
-  )
 }

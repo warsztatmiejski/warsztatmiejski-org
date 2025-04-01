@@ -20,6 +20,12 @@ import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { default as default_3d0e918b9ebf2f7fc3be806e67178b3b } from 'src/admin/graphics/Icon'
+import { default as default_b7a3ca1581a1d8098bd96e434cc67dc3 } from 'src/admin/components/Login'
+import { default as default_75112686fc59e9e3bb739076862f0692 } from 'src/admin/components/CustomNavLinks'
+import { default as default_b81c809e237f34d7e4a18753bed4b638 } from 'src/admin/components/DashboardBanner'
+import { default as default_64a4da299b1729e45f89a404fadc37fb } from 'src/admin/providers/AdminThemeProvider'
+import { default as default_afed7ab73a3f2e2927bc16f5ff609932 } from 'src/admin/components/Dashboard'
 
 export const importMap = {
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
@@ -43,5 +49,11 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#StrikethroughFeatureClient": StrikethroughFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
-  "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864
+  "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "src/admin/graphics/Icon#default": default_3d0e918b9ebf2f7fc3be806e67178b3b,
+  "src/admin/components/Login#default": default_b7a3ca1581a1d8098bd96e434cc67dc3,
+  "src/admin/components/CustomNavLinks#default": default_75112686fc59e9e3bb739076862f0692,
+  "src/admin/components/DashboardBanner#default": default_b81c809e237f34d7e4a18753bed4b638,
+  "src/admin/providers/AdminThemeProvider#default": default_64a4da299b1729e45f89a404fadc37fb,
+  "src/admin/components/Dashboard#default": default_afed7ab73a3f2e2927bc16f5ff609932
 }

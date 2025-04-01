@@ -1,0 +1,226 @@
+/* src/app/(payload)/custom.scss */
+/* CSS Variables for White Labeling */
+
+// Zmienne kolorów - dostosuj do własnych potrzeb
+:root {
+  --theme-elevation-0: #ffffff;
+  --theme-elevation-50: #f9fafb;
+  --theme-elevation-100: #f3f4f6;
+  --theme-elevation-150: #e9eef2;
+  --theme-elevation-200: #e5e7eb;
+  --theme-elevation-300: #d1d5db;
+  --theme-elevation-400: #9ca3af;
+  --theme-elevation-500: #6b7280;
+  --theme-elevation-600: #4b5563;
+  --theme-elevation-700: #374151;
+  --theme-elevation-800: #1f2937;
+  --theme-elevation-900: #111827;
+  --theme-elevation-1000: #000000;
+
+  --theme-success-50: #ecfdf5;
+  --theme-success-100: #d1fae5;
+  --theme-success-500: #10b981;
+  --theme-success-900: #064e3b;
+
+  --theme-warning-50: #fffbeb;
+  --theme-warning-100: #fef3c7;
+  --theme-warning-500: #f59e0b;
+  --theme-warning-900: #78350f;
+
+  --theme-error-50: #fef2f2;
+  --theme-error-100: #fee2e2;
+  --theme-error-500: #ef4444;
+  --theme-error-900: #7f1d1d;
+
+  /* White label variables - these can be overwritten by the AdminThemeProvider */
+  --theme-brand-50: #eff6ff;
+  --theme-brand-100: #dbeafe;
+  --theme-brand-500: var(--admin-primary-color, #0066CC); /* Primary brand color */
+  --theme-brand-900: var(--admin-secondary-color, #003366); /* Secondary brand color */
+  --admin-accent-color: var(--admin-accent-color, #FF9900); /* Accent color */
+}
+
+// Główny nagłówek
+.nav {
+  &__brand {
+	svg {
+	  max-width: 200px;
+	}
+  }
+}
+
+// Logo
+.brand {
+  padding: 12px 0;
+
+  svg, img {
+	max-height: 40px;
+  }
+}
+
+// Własny styl przycisków
+button.btn {
+  border-radius: 6px;
+
+  &.btn--style-primary {
+	background-color: var(--theme-brand-500);
+
+	&:hover {
+	  background-color: var(--theme-brand-900);
+	}
+  }
+}
+
+// Pola formularza
+.field-type {
+  &--richText {
+	.rich-text-editor {
+	  border-radius: 6px;
+	  border-color: var(--theme-elevation-300);
+
+	  &:focus-within {
+		border-color: var(--theme-brand-500);
+	  }
+	}
+  }
+
+  &--text,
+  &--textarea,
+  &--select,
+  &--email,
+  &--number,
+  &--password {
+	input,
+	textarea,
+	select {
+	  border-radius: 6px;
+
+	  &:focus {
+		border-color: var(--theme-brand-500);
+		box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+	  }
+	}
+  }
+}
+
+// Stylizacja nawigacji
+.nav__link {
+  &:hover {
+	background-color: var(--theme-elevation-100);
+  }
+
+  &--active {
+	background-color: var(--theme-brand-50) !important;
+	color: var(--theme-brand-500) !important;
+
+	svg {
+	  color: var(--theme-brand-500) !important;
+	}
+  }
+}
+
+// Karty w dashboardzie
+.card {
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+
+  &:hover {
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+	transform: translateY(-2px);
+  }
+}
+
+// Tabele
+.collection-list__table {
+  th, td {
+	padding: 12px 16px;
+  }
+
+  thead th {
+	background-color: var(--theme-elevation-50);
+	font-weight: 600;
+  }
+
+  tbody tr {
+	&:hover {
+	  background-color: var(--theme-elevation-50);
+	}
+  }
+}
+
+// Styl akapitów pomocy
+.field-description {
+  color: var(--theme-elevation-500);
+  font-style: italic;
+  margin-top: 4px;
+  font-size: 0.875rem;
+}
+
+// Odseparuj bloki w edytorze stron
+.blocks-field__blocks {
+  .blocks-field__block {
+	margin-bottom: 2rem;
+	padding: 1.5rem;
+	border: 1px solid var(--theme-elevation-200);
+	border-radius: 8px;
+
+	&:hover {
+	  border-color: var(--theme-elevation-400);
+	}
+  }
+}
+
+// Wersje (drafty)
+.versions {
+  &__header {
+	background-color: var(--theme-elevation-100);
+	border-radius: 6px 6px 0 0;
+  }
+
+  &__list-item {
+	&--published {
+	  background-color: var(--theme-success-50);
+	}
+
+	&--draft {
+	  background-color: var(--theme-warning-50);
+	}
+  }
+}
+
+// Poprawki dla podglądu live
+.live-preview {
+  border-radius: 8px;
+  overflow: hidden;
+
+  &__wrapper {
+	padding: 1rem;
+  }
+
+  &__header {
+	background-color: var(--theme-elevation-100);
+	padding: 0.75rem 1rem;
+  }
+}
+
+// Media wybrane w relacjach
+.upload-gallery {
+  &__media {
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Menu boczne - grupy
+.nav__group {
+  h5 {
+	font-size: 0.75rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--theme-elevation-500);
+	padding: 0.5rem 1rem;
+	margin-top: 1rem;
+  }
+}

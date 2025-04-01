@@ -8,74 +8,113 @@ import { pl } from '@payloadcms/translations/languages/pl'
 import { en } from '@payloadcms/translations/languages/en'
 
 // Import collections
-import { Users } from './src/collections/Users'
-import { Pages } from './src/collections/Pages'
-import { Media } from './src/collections/Media'
-import { MainMenu } from './src/collections/MainMenu'
-import { ThemeSettings } from './src/collections/ThemeSettings'
-import { Events } from './src/collections/Events'
-import { Members } from './src/collections/Members'
+import { Users } from '@/collections/Users'
+import { Pages } from '@/collections/Pages'
+import { Media } from '@/collections/Media'
+import { MainMenu } from '@/collections/MainMenu'
+import { ThemeSettings } from '@/collections/ThemeSettings'
+import { Events } from '@/collections/Events'
+import { Members } from '@/collections/Members'
 
 export default buildConfig({
-	serverURL: process.env.NEXT_PUBLIC_SERVER_URL,
-	secret: process.env.PAYLOAD_SECRET,
+  serverURL: process.env.NEXT_PUBLIC_SERVER_URL,
+  secret: process.env.PAYLOAD_SECRET,
 
-	admin: {
-		user: Users.slug,
-		meta: {
-			titleSuffix: '- Warsztat Miejski Admin',
-			favicon: '/favicon.ico',
-		},
-		livePreview: {
-		  breakpoints: [
-			  {
-				name: 'mobile',
-				width: 375,
-				height: 667,
-				label: 'Mobilny',
-			  },
-			  {
-				name: 'tablet',
-				width: 768,
-				height: 1024,
-				label: 'Tablet',
-			  },
-			  {
-				name: 'desktop',
-				width: 1440,
-				height: 900,
-				label: 'Desktop',
-			  },
-			],
-		},
+  admin: {
+	user: Users.slug,
+	meta: {
+	  titleSuffix: `- ${process.env.NEXT_PUBLIC_ADMIN_TITLE || 'Warsztat Miejski Admin'}`,
+	  favicon: '/favicon.ico',
+	  ogImage: '/admin-og-image.jpg',
 	},
-
-	editor: lexicalEditor({}),
-
-	db: postgresAdapter({
-		pool: {
-			connectionString: process.env.DATABASE_URI,
+	//
+	components: {
+	  // Dashboard view
+	  views: {
+		Dashboard: {
+		  Component: 'src/admin/components/Dashboard',
 		},
-	}),
-
-	collections: [
-		Users,
-		Pages,
-		Media,
-		MainMenu,
-		ThemeSettings,
-		Events,
-		Members,
-	],
-
-	i18n: {
-		supportedLanguages: { pl, en },
-		fallbackLanguage: 'en',
+	  },
+	  // Components before and after dashboard
+	  beforeDashboard: ['src/admin/components/DashboardBanner'],
+	  afterNavLinks: ['src/admin/components/CustomNavLinks'],
+	  // Theme provider
+	  providers: [
+		'src/admin/providers/AdminThemeProvider',
+	  ],
+	  // Graphics for white labeling - use paths instead of imports
+	  graphics: {
+		Logo: 'src/admin/components/Login',
+		Icon: 'src/admin/graphics/Icon',
+	  },
 	},
-
-	typescript: {
-		outputFile: path.resolve(__dirname, 'payload-types.ts'),
+	// Customowy CSS
+	css: path.resolve(__dirname, 'src/app/(payload)/custom.scss'),
+	//
+	// Grupowanie kolekcji w menu
+	groupNav: {
+	  'Główne': ['pages', 'events', 'members'],
+	  'Ustawienia': ['theme-settings', 'main-menu'],
+	  'System': ['media', 'users'],
 	},
+	livePreview: {
+	  breakpoints: [
+		{
+		  name: 'mobile',
+		  width: 375,
+		  height: 667,
+		  label: 'Mobilny',
+		},
+		{
+		  name: 'tablet',
+		  width: 768,
+		  height: 1024,
+		  label: 'Tablet',
+		},
+		{
+		  name: 'desktop',
+		  width: 1440,
+		  height: 900,
+		  label: 'Desktop',
+		},
+	  ],
+	},
+  },
 
-	sharp,
+  editor: lexicalEditor({}),
+
+  db: postgresAdapter({
+	pool: {
+	  connectionString: process.env.DATABASE_URI,
+	},
+  }),
+
+  collections: [
+	Users,
+	Pages,
+	Media,
+	MainMenu,
+	ThemeSettings,
+	Events,
+	Members,
+  ],
+
+  i18n: {
+	supportedLanguages: { pl, en },
+	defaultLanguage: 'pl', // Ustawienie polskiego jako domyślny język
+	fallbackLanguage: 'en',
+  },
+
+  typescript: {
+	outputFile: path.resolve(__dirname, 'payload-types.ts'),
+  },
+
+  sharp,
+
+  // Dostosowanie limitów uploadu
+  upload: {
+	limits: {
+	  fileSize: 5000000, // 5MB
+	},
+  }
 })
