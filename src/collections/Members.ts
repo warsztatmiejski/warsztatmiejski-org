@@ -3,10 +3,24 @@ import { CollectionConfig } from 'payload/types';
 
 export const Members: CollectionConfig = {
   slug: 'members',
+  labels: {
+    singular: {
+      en: 'Member',
+      pl: 'Członek',
+    },
+    plural: {
+      en: 'Members',
+      pl: 'Członkowie',
+    },
+  },
   auth: true, // Enable authentication for members
   admin: {
 	useAsTitle: 'email',
 	defaultColumns: ['email', 'firstName', 'lastName', 'membershipStatus'],
+	group: {
+	  en: 'Main',
+	  pl: 'Główne',
+	},
   },
   access: {
 	read: () => true,

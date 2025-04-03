@@ -3,10 +3,23 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
+  labels: {
+    singular: {
+      en: 'Page',
+      pl: 'Strona',
+    },
+    plural: {
+      en: 'Pages',
+      pl: 'Strony',
+    },
+  },
   admin: {
 	useAsTitle: 'title',
 	defaultColumns: ['title', 'slug', 'status', 'updatedAt'],
-	group: 'Content',
+	group: {
+	  en: 'Main',
+	  pl: 'Główne',
+	},
 	// Poprawiona konfiguracja Live Preview
 	livePreview: {
 	  url: ({ data }) => {

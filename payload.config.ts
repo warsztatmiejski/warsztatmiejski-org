@@ -38,9 +38,10 @@ export default buildConfig({
 	  // Components before and after dashboard
 	  beforeDashboard: ['src/admin/components/DashboardBanner'],
 	  afterNavLinks: ['src/admin/components/CustomNavLinks'],
-	  // Theme provider
+	  // Theme provider and other global components
 	  providers: [
 		'src/admin/providers/AdminThemeProvider',
+		'src/admin/providers/AdminMetaProvider',
 	  ],
 	  // Graphics for white labeling - use paths instead of imports
 	  graphics: {
@@ -52,11 +53,7 @@ export default buildConfig({
 	css: path.resolve(__dirname, 'src/app/(payload)/custom.scss'),
 	//
 	// Grupowanie kolekcji w menu
-	groupNav: {
-	  'Główne': ['pages', 'events', 'members'],
-	  'Ustawienia': ['theme-settings', 'main-menu'],
-	  'System': ['media', 'users'],
-	},
+	// We're now using proper i18n approach in each collection for group definitions
 	livePreview: {
 	  breakpoints: [
 		{

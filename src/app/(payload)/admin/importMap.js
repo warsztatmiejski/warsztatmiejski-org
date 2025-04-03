@@ -25,6 +25,7 @@ import { default as default_b7a3ca1581a1d8098bd96e434cc67dc3 } from 'src/admin/c
 import { default as default_75112686fc59e9e3bb739076862f0692 } from 'src/admin/components/CustomNavLinks'
 import { default as default_b81c809e237f34d7e4a18753bed4b638 } from 'src/admin/components/DashboardBanner'
 import { default as default_64a4da299b1729e45f89a404fadc37fb } from 'src/admin/providers/AdminThemeProvider'
+import { default as default_a1042e7949efe874f4e2e5c12d1d2f9e } from 'src/admin/providers/AdminMetaProvider'
 import { default as default_afed7ab73a3f2e2927bc16f5ff609932 } from 'src/admin/components/Dashboard'
 
 export const importMap = {
@@ -55,5 +56,6 @@ export const importMap = {
   "src/admin/components/CustomNavLinks#default": default_75112686fc59e9e3bb739076862f0692,
   "src/admin/components/DashboardBanner#default": default_b81c809e237f34d7e4a18753bed4b638,
   "src/admin/providers/AdminThemeProvider#default": default_64a4da299b1729e45f89a404fadc37fb,
+  "src/admin/providers/AdminMetaProvider#default": default_a1042e7949efe874f4e2e5c12d1d2f9e,
   "src/admin/components/Dashboard#default": default_afed7ab73a3f2e2927bc16f5ff609932
 }

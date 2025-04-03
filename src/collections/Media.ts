@@ -3,6 +3,16 @@ import { CollectionConfig } from 'payload/types';
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  labels: {
+    singular: {
+      en: 'Media',
+      pl: 'Medium',
+    },
+    plural: {
+      en: 'Media',
+      pl: 'Media',
+    },
+  },
   access: {
 	// Anyone can view media
 	read: () => true,
@@ -13,7 +23,10 @@ export const Media: CollectionConfig = {
   },
   admin: {
 	useAsTitle: 'filename',
-	group: 'Content',
+	group: {
+	  en: 'System',
+	  pl: 'System',
+	},
   },
   upload: {
 	// Store files in the /public/media directory for easy access

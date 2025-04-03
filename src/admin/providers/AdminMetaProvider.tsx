@@ -4,13 +4,15 @@ import React, { useEffect, useState } from 'react';
 import { useConfig } from '@payloadcms/ui';
 import Head from 'next/head';
 
-const AdminMetaProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { serverURL, admin } = useConfig();
+export const AdminMetaProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { serverURL, admin, i18n } = useConfig();
   const [meta, setMeta] = useState({
     title: admin?.meta?.title || 'Admin',
     favicon: admin?.meta?.favicon || '/favicon.ico',
     ogImage: admin?.meta?.ogImage || '/admin-og-image.jpg',
   });
+
+  // No custom language handling needed - PayloadCMS handles this natively
 
   // Fetch theme settings on load
   useEffect(() => {

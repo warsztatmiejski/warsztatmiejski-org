@@ -3,6 +3,16 @@ import { CollectionConfig } from 'payload/types';
 
 export const MainMenu: CollectionConfig = {
   slug: 'main-menu',
+  labels: {
+    singular: {
+      en: 'Main Menu',
+      pl: 'Menu',
+    },
+    plural: {
+      en: 'Main Menus',
+      pl: 'Menu',
+    },
+  },
   access: {
 	// Anyone can read the menu
 	read: () => true,
@@ -13,7 +23,10 @@ export const MainMenu: CollectionConfig = {
   },
   admin: {
 	useAsTitle: 'title',
-	group: 'Content',
+	group: {
+	  en: 'Settings',
+	  pl: 'Ustawienia',
+	},
   },
   fields: [
 	{

@@ -2,8 +2,21 @@ import { CollectionConfig } from 'payload/types';
 
 export const ThemeSettings: CollectionConfig = {
   slug: 'theme-settings',
+  labels: {
+    singular: {
+      en: 'Theme Settings',
+      pl: 'Ustawienia motywu',
+    },
+    plural: {
+      en: 'Theme Settings',
+      pl: 'Ustawienia motywu',
+    },
+  },
   admin: {
-    group: 'Ustawienia',
+    group: {
+      en: 'Settings',
+      pl: 'Ustawienia',
+    },
     useAsTitle: 'name',
   },
   access: {

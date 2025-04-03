@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useConfig } from '@payloadcms/ui';
 import { useAdminTheme } from '../providers/AdminThemeProvider';
+import { t } from '../../lib/getActiveLanguage';
 
 // Define types for our data
 type CollectionCounts = {
@@ -18,6 +19,7 @@ type RecentActivity = {
     email: string;
   };
 };
+
 
 const Dashboard: React.FC = () => {
   const { collections, serverURL } = useConfig();
@@ -50,15 +52,16 @@ const Dashboard: React.FC = () => {
       // Fetch recent activity
       try {
         // This is a simplified version. In a real app, you'd need to implement an endpoint for this
-        const recentPagesResponse = await fetch(`${serverURL}/api/pages?limit=5&sort=-updatedAt`);
-        const recentPagesData = await recentPagesResponse.json();
+        let pagesActivity: RecentActivity[] = [];
+        let eventsActivity: RecentActivity[] = [];
+        
+        try {
+          const recentPagesResponse = await fetch(`${serverURL}/api/pages?limit=5&sort=-updatedAt`);
+          const recentPagesData = await recentPagesResponse.json();
 
-        const recentEventsResponse = await fetch(`${serverURL}/api/events?limit=5&sort=-updatedAt`);
-        const recentEventsData = await recentEventsResponse.json();
-
-        // Make sure we have docs before trying to map them
-        const pagesActivity = Array.isArray(recentPagesData?.docs) 
-          ? recentPagesData.docs
+          // Make sure we have docs before trying to map them
+          if (recentPagesData && Array.isArray(recentPagesData.docs)) {
+            pagesActivity = recentPagesData.docs
               .filter((doc: any) => doc && doc.id) // Ensure doc exists and has an id
               .map((doc: any) => ({
                 id: doc.id,
@@ -66,30 +69,40 @@ const Dashboard: React.FC = () => {
                 title: doc.title || 'Untitled Page',
                 updatedAt: doc.updatedAt || new Date().toISOString(),
                 user: doc.updatedBy
-              }))
-          : [];
+              }));
+          }
+        } catch (error) {
+          console.error('Error fetching pages activity:', error);
+        }
+        
+        try {
+          const recentEventsResponse = await fetch(`${serverURL}/api/events?limit=5&sort=-updatedAt`);
+          const recentEventsData = await recentEventsResponse.json();
           
-        const eventsActivity = Array.isArray(recentEventsData?.docs)
-          ? recentEventsData.docs
+          if (recentEventsData && Array.isArray(recentEventsData.docs)) {
+            eventsActivity = recentEventsData.docs
               .filter((doc: any) => doc && doc.id) // Ensure doc exists and has an id
               .map((doc: any) => ({
                 id: doc.id,
                 collection: 'events',
-                title: doc.title || 'Untitled Event',
+                title: typeof doc.title === 'string' ? doc.title : (doc.title?.pl || doc.title?.en || 'Untitled Event'),
                 updatedAt: doc.updatedAt || new Date().toISOString(),
                 user: doc.updatedBy
-              }))
-          : [];
+              }));
+          }
+        } catch (error) {
+          console.error('Error fetching events activity:', error);
+        }
           
         // Combine and sort by updatedAt
         const combinedActivity = [
-          ...pagesActivity,
-          ...eventsActivity
+          ...(Array.isArray(pagesActivity) ? pagesActivity : []),
+          ...(Array.isArray(eventsActivity) ? eventsActivity : [])
         ]
         .sort((a, b) => {
           // Ensure we have dates to compare
-          const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
-          const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+          const dateA = a?.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+          const dateB = b?.updatedAt ? new Date(b.updatedAt).getTime() : 0;
           return dateB - dateA;
         })
         .slice(0, 5);
@@ -105,14 +118,40 @@ const Dashboard: React.FC = () => {
     fetchData();
   }, [collections, serverURL]);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      const dropdowns = document.querySelectorAll('[data-dropdown]');
+      dropdowns.forEach(dropdown => {
+        if (dropdown.classList.contains('open')) {
+          dropdown.classList.remove('open');
+        }
+      });
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
   return (
     <div className="dashboard">
-      <h1 style={{ margin: '20px 0', fontSize: '1.5rem', fontWeight: 'bold' }}>
-        {isWhiteLabel ? 'Panel Administracyjny' : `Panel Administracyjny ${orgName}`}
-      </h1>
+      {/* Header with title */}
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+        margin: '20px 0'
+      }}>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>
+          {isWhiteLabel 
+            ? t('Panel Administracyjny', 'Admin Dashboard')
+            : t(`Panel Administracyjny ${orgName}`, `${orgName} Admin Dashboard`)}
+        </h1>
+      </div>
 
       {loading ? (
-        <p>Ładowanie danych...</p>
+        <p>{t('Ładowanie danych...', 'Loading data...')}</p>
       ) : (
         <>
           {/* Collection Stats */}
@@ -147,7 +186,7 @@ const Dashboard: React.FC = () => {
           {/* Recent Activity */}
           <div>
             <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '15px' }}>
-              Ostatnia Aktywność
+              {t('Ostatnia Aktywność', 'Recent Activity')}
             </h2>
             <div style={{
               padding: '15px',
@@ -171,18 +210,18 @@ const Dashboard: React.FC = () => {
                           {activity.title || `${activity.collection} #${activity.id}`}
                         </p>
                         <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0 }}>
-                          Kolekcja: {activity.collection}
-                          {activity.user && ` • Użytkownik: ${activity.user.email}`}
+                          {t('Kolekcja', 'Collection')}: {activity.collection}
+                          {activity.user && ` • ${t('Użytkownik', 'User')}: ${activity.user.email}`}
                         </p>
                       </div>
                       <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0 }}>
-                        {new Date(activity.updatedAt).toLocaleString('pl-PL')}
+                        {new Date(activity.updatedAt).toLocaleString(t('pl-PL', 'en-US'))}
                       </p>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p>Brak ostatniej aktywności</p>
+                <p>{t('Brak ostatniej aktywności', 'No recent activity')}</p>
               )}
             </div>
           </div>
@@ -190,7 +229,7 @@ const Dashboard: React.FC = () => {
           {/* Quick Links */}
           <div style={{ marginTop: '30px' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '15px' }}>
-              Szybkie Akcje
+              {t('Szybkie Akcje', 'Quick Actions')}
             </h2>
             <div style={{
               display: 'grid',
@@ -258,7 +297,8 @@ const Dashboard: React.FC = () => {
                   </div>
                   <div>
                     <p style={{ fontWeight: 'bold', margin: 0 }}>
-                      Dodaj {collection.labels?.singular || collection.slug}
+                      {t(`Dodaj ${collection.labels?.singular || collection.slug}`, 
+                         `Add ${collection.labels?.singular || collection.slug}`)}
                     </p>
                   </div>
                 </a>
